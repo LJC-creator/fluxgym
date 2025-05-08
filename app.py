@@ -410,6 +410,7 @@ def gen_sh(
 
 
     ############# Optimizer args ########################
+# UPDATED:
 #    if vram == "8G":
 #        optimizer = f"""--optimizer_type adafactor {line_break}
 #    --optimizer_args "relative_step=False" "scale_parameter=False" "warmup_init=False" {line_break}
@@ -417,6 +418,13 @@ def gen_sh(
 #        --network_args "train_blocks=single" {line_break}
 #        --lr_scheduler constant_with_warmup {line_break}
 #        --max_grad_norm 0.0 {line_break}"""
+    if vram == "8G":
+        optimizer = f"""--optimizer_type adafactor {line_break}
+    --optimizer_args "relative_step=False" "scale_parameter=False" "warmup_init=False" {line_break}
+        --split_mode {line_break}
+        --network_args "train_blocks=single" {line_break}
+        --lr_scheduler constant_with_warmup {line_break}
+        --max_grad_norm 0.0 {line_break}"""
     if vram == "16G":
         # 16G VRAM
         optimizer = f"""--optimizer_type adafactor {line_break}
