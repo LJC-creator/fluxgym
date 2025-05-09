@@ -410,7 +410,7 @@ def gen_sh(
 
 
     ############# Optimizer args ########################
-# UPDATED:
+# UPDATED: Added 8G and removed 20G.
 #    if vram == "8G":
 #        optimizer = f"""--optimizer_type adafactor {line_break}
 #    --optimizer_args "relative_step=False" "scale_parameter=False" "warmup_init=False" {line_break}
@@ -418,6 +418,25 @@ def gen_sh(
 #        --network_args "train_blocks=single" {line_break}
 #        --lr_scheduler constant_with_warmup {line_break}
 #        --max_grad_norm 0.0 {line_break}"""
+#    if vram == "16G":
+#        # 16G VRAM
+#        optimizer = f"""--optimizer_type adafactor {line_break}
+#  --optimizer_args "relative_step=False" "scale_parameter=False" "warmup_init=False" {line_break}
+#  --lr_scheduler constant_with_warmup {line_break}
+#  --max_grad_norm 0.0 {line_break}"""
+#    elif vram == "12G":
+#      # 12G VRAM
+#        optimizer = f"""--optimizer_type adafactor {line_break}
+#  --optimizer_args "relative_step=False" "scale_parameter=False" "warmup_init=False" {line_break}
+#  --split_mode {line_break}
+#  --network_args "train_blocks=single" {line_break}
+#  --lr_scheduler constant_with_warmup {line_break}
+#  --max_grad_norm 0.0 {line_break}"""
+#    else:
+#        # 20G+ VRAM
+#        optimizer = f"--optimizer_type adamw8bit {line_break}"
+
+        # 8G VRAM
     if vram == "8G":
         optimizer = f"""--optimizer_type adafactor {line_break}
     --optimizer_args "relative_step=False" "scale_parameter=False" "warmup_init=False" {line_break}
@@ -425,14 +444,8 @@ def gen_sh(
         --network_args "train_blocks=single" {line_break}
         --lr_scheduler constant_with_warmup {line_break}
         --max_grad_norm 0.0 {line_break}"""
-    if vram == "16G":
-        # 16G VRAM
-        optimizer = f"""--optimizer_type adafactor {line_break}
-  --optimizer_args "relative_step=False" "scale_parameter=False" "warmup_init=False" {line_break}
-  --lr_scheduler constant_with_warmup {line_break}
-  --max_grad_norm 0.0 {line_break}"""
+        # 12G VRAM
     elif vram == "12G":
-      # 12G VRAM
         optimizer = f"""--optimizer_type adafactor {line_break}
   --optimizer_args "relative_step=False" "scale_parameter=False" "warmup_init=False" {line_break}
   --split_mode {line_break}
@@ -440,8 +453,11 @@ def gen_sh(
   --lr_scheduler constant_with_warmup {line_break}
   --max_grad_norm 0.0 {line_break}"""
     else:
-        # 20G+ VRAM
-        optimizer = f"--optimizer_type adamw8bit {line_break}"
+        # 16G VRAM
+        optimizer = f"""--optimizer_type adafactor {line_break}
+  --optimizer_args "relative_step=False" "scale_parameter=False" "warmup_init=False" {line_break}
+  --lr_scheduler constant_with_warmup {line_break}
+  --max_grad_norm 0.0 {line_break}"""
 
 
     #######################################################
@@ -930,7 +946,8 @@ with gr.Blocks(elem_id="app", theme=theme, css=css, fill_width=True) as demo:
                     model_names = list(models.keys())
                     print(f"model_names={model_names}")
                     base_model = gr.Dropdown(label="Base model (edit the models.yaml file to add more to this list)", choices=model_names, value=model_names[0])
-                    vram = gr.Radio(["20G", "16G", "12G" ], value="20G", label="VRAM", interactive=True)
+                    # UPDATED: Removed 20G and added 8G, changed default setting to 8G.
+                    vram = gr.Radio(["16G", "12G", "8G" ], value="8G", label="VRAM", interactive=True)
                     num_repeats = gr.Number(value=10, precision=0, label="Repeat trains per image", interactive=True)
                     max_train_epochs = gr.Number(label="Max Train Epochs", value=16, interactive=True)
                     total_steps = gr.Number(0, interactive=False, label="Expected training steps")
